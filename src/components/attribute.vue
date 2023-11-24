@@ -150,6 +150,22 @@
           ></InputNumber>
         </Col>
       </Row>
+      <Row :gutter="12">
+        <Col flex="1">
+          <InputNumber
+            v-model="baseAttr.width"
+            @on-change="(value) => changeCommon('width', value)"
+            :append="$t('attributes.width')"
+          ></InputNumber>
+        </Col>
+        <Col flex="1">
+          <InputNumber
+            v-model="baseAttr.height"
+            @on-change="(value) => changeCommon('height', value)"
+            :append="$t('attributes.height')"
+          ></InputNumber>
+        </Col>
+      </Row>
       <div class="flex-view">
         <div class="flex-item">
           <span class="label">{{ $t('attributes.angle') }}</span>
@@ -318,6 +334,8 @@ const baseAttr = reactive({
   fill: '#fff',
   left: 0,
   top: 0,
+  width: 0,
+  height: 0,
   strokeWidth: 0,
   strokeDashArray: [],
   stroke: '#fff',
@@ -454,6 +472,9 @@ const getObjectAttr = (e) => {
     baseAttr.angle = activeObject.get('angle') || 0;
     baseAttr.points = activeObject.get('points') || {};
 
+    baseAttr.width = activeObject.get('width') * activeObject.get('scaleX');
+    baseAttr.height = activeObject.get('height') * activeObject.get('scaleY');
+
     const textTypes = ['i-text', 'text', 'textbox'];
     if (textTypes.includes(activeObject.type)) {
       fontAttr.fontSize = activeObject.get('fontSize');
@@ -524,6 +545,20 @@ const changeCommon = (key, value) => {
   // 旋转角度适配
   if (key === 'angle') {
     activeObject.rotate(value);
+    canvasEditor.canvas.renderAll();
+    return;
+  }
+
+  // 设置宽，元素是根据transform来缩放，所以需要设置scale属性
+  if (key === 'width') {
+    activeObject.set('scaleX', value / activeObject.get('width'));
+    canvasEditor.canvas.renderAll();
+    return;
+  }
+
+  // 设置高，元素是根据transform来缩放，所以需要设置scale属性
+  if (key === 'height') {
+    activeObject.set('scaleY', value / activeObject.get('height'));
     canvasEditor.canvas.renderAll();
     return;
   }
@@ -612,6 +647,7 @@ onBeforeUnmount(() => {
 :deep(.ivu-color-picker) {
   display: block;
 }
+
 :deep(.ivu-input-number) {
   display: block;
   width: 100%;
@@ -625,6 +661,7 @@ onBeforeUnmount(() => {
     color: #000000;
   }
 }
+
 .box {
   width: 100%;
 }
@@ -632,6 +669,7 @@ onBeforeUnmount(() => {
 .button-group {
   display: flex;
   width: 100%;
+
   .ivu-btn,
   .ivu-radio-wrapper {
     flex: 1;
@@ -647,9 +685,11 @@ onBeforeUnmount(() => {
   border-radius: 5px;
   background: #f6f7f9;
 }
+
 .flex-item {
   display: inline-flex;
   flex: 1;
+
   .label {
     width: 32px;
     height: 32px;
@@ -658,32 +698,40 @@ onBeforeUnmount(() => {
     font-size: 14px;
     // color: #333333;
   }
+
   .content {
     width: 60px;
   }
+
   .slider-box {
     width: calc(100% - 50px);
     margin-left: 10px;
   }
+
   .left {
     flex: 1;
   }
+
   .right {
     flex: 1;
     margin-left: 10px;
+
     :deep(.ivu-input-number) {
       display: block;
       width: 100%;
     }
   }
+
   :deep(.ivu-slider-wrap) {
     margin: 13px 0;
   }
+
   :deep(.ivu-radio-group-button) {
     & .ivu-radio-wrapper {
       width: 48px;
       line-height: 40px;
       text-align: center;
+
       svg {
         vertical-align: baseline;
       }
@@ -708,6 +756,7 @@ onBeforeUnmount(() => {
 
   .ivu-col {
     position: inherit;
+
     &__box {
       display: flex;
       align-items: center;

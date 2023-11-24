@@ -171,6 +171,8 @@
     "angle": "Angle",
     "left": "Left",
     "top": "Top",
+    "width": "Width",
+    "height": "Height",
     "opacity": "Opacity",
     "shadow": "Shadow",
     "blur": "Blur",

@@ -160,6 +160,8 @@
     "angle": "旋转",
     "left": "X轴",
     "top": "Y轴",
+    "width": "宽",
+    "height": "高",
     "opacity": "透明",
     "shadow": "阴影",
     "blur": "模糊",
